@@ -13,7 +13,6 @@ The system builds coverage matrices (JaCoCo), applies different minimization alg
 # Instruction
 
 ## STEP 0. Clean previous results
-
 ```powershell
 Remove-Item -Recurse -Force target\minimizer,target\pit-reports -ErrorAction SilentlyContinue
 ```
@@ -24,7 +23,6 @@ mvn -DskipTests test-compile
 ```
 
 ## STEP 2. Common parameters
-
 These parameters must be identical for both BEFORE and AFTER runs to ensure correct comparison.
 ```powershell
 $targetClasses = "<TARGET_CLASSES_PATTERN>"
@@ -53,7 +51,6 @@ $includeClassRegex = '^(' + (($beforeTests -split ',' | ForEach-Object {
 ```
 
 ## STEP 3. BEFORE - original test suite (before minimization)
-
 ```powershell
 mvn org.pitest:pitest-maven:mutationCoverage `
   "-DtargetClasses=$targetClasses" `
@@ -115,5 +112,20 @@ mvn org.pitest:pitest-maven:mutationCoverage `
   "-DtimeoutConstant=$timeoutConstant"
 ```
 
+## Supported algorithms
+- PBE
+- ILP
+- Naive
+- Greedy Essential
+- Genetic
 
-
+## Output
+### Minimization results
+```
+target/minimizer/<algorithm_name>/
+```
+### Mutation testing reports
+```
+target/pit-reports/before/
+target/pit-reports/after/
+```
