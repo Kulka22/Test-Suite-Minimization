@@ -129,3 +129,15 @@ target/minimizer/<algorithm_name>/
 target/pit-reports/before/
 target/pit-reports/after/
 ```
+
+## Examples
+Jsoup and jHeaps were used as examples of projects where algorithms are tested.
+### Jsoup original
+```
+https://github.com/jhy/jsoup
+```
+
+### jHeaps original
+```
+https://github.com/d-michail/jheaps
+```
