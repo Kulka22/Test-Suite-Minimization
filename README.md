@@ -51,3 +51,69 @@ $includeClassRegex = '^(' + (($beforeTests -split ',' | ForEach-Object {
   $_.Trim() -replace '\.', '[.]' -replace '\*', '.*'
 }) -join '|') + ')$'
 ```
+
+## STEP 3. BEFORE - original test suite (before minimization)
+
+```powershell
+mvn org.pitest:pitest-maven:mutationCoverage `
+  "-DtargetClasses=$targetClasses" `
+  "-DtargetTests=$beforeTests" `
+  -DreportsDirectory=target/pit-reports/before`
+  -DtimestampedReports=false `
+  "-Dthreads=$threads" `
+  "-DtimeoutFactor=$timeoutFactor" `
+  "-DtimeoutConstant=$timeoutConstant"
+```
+
+## STEP 4. Collect full coverage data
+```powershell
+mvn -DskipTests test-compile org.codehaus.mojo:exec-maven-plugin:3.6.1:java `
+  "-Dexec.classpathScope=test" `
+  "-Dexec.mainClass=minimizer.pipeline.MinimizerPipelineMain" `
+  "-Dexec.args=collect-full" `
+  "-Dminimizer.classPattern=$includeClassRegex"
+```
+
+## STEP 5. Run minimization
+```powershell
+mvn -DskipTests test-compile org.codehaus.mojo:exec-maven-plugin:3.6.1:java `
+  "-Dexec.classpathScope=test" `
+  "-Dexec.mainClass=minimizer.pipeline.MinimizerPipelineMain" `
+  "-Dexec.args=minimize" `
+  "-Dminimizer.algorithm=$algorithm" `
+  "-Dminimizer.metric=METHOD"
+```
+
+## STEP 6. Generate minimized test wrappers
+```powershell
+mvn -DskipTests test-compile org.codehaus.mojo:exec-maven-plugin:3.6.1:java `
+  "-Dexec.classpathScope=test" `
+  "-Dexec.mainClass=minimizer.pitest.PitestMinimizedWrappersMain" `
+  "-Dminimizer.algorithm=$algorithm" `
+  "-Dminimizer.pit.includeClassRegex=$includeClassRegex"
+```
+
+## STEP 7. Store wrapper test list
+```powershell
+$afterTests = (Get-Content "target/minimizer/pit/$algorithmDir-target-tests-minwrappers.txt" -Raw).Trim()
+```
+
+## STEP 8. AFTER - mutation testing on minimized suite
+```powershell
+$selectedIdsFile = "target/minimizer/$algorithmDir/selected-test-ids.txt"
+
+mvn org.pitest:pitest-maven:mutationCoverage `
+  "-DtargetClasses=$targetClasses" `
+  "-DtargetTests=$afterTests" `
+  "-Dminimizer.pit.selectedIdsFile=$selectedIdsFile" `
+  "-Dminimizer.algorithm=$algorithm" `
+  "-DjvmArgs=-Dminimizer.pit.selectedIdsFile=$selectedIdsFile,-Dminimizer.algorithm=$algorithm" `
+  -DreportsDirectory=target/pit-reports/after`
+  -DtimestampedReports=false `
+  "-Dthreads=$threads" `
+  "-DtimeoutFactor=$timeoutFactor" `
+  "-DtimeoutConstant=$timeoutConstant"
+```
+
+
+
