@@ -461,10 +461,6 @@
                   <compileSourceRoots>
                     <compileSourceRoot>${project.basedir}/src/main/java11</compileSourceRoot>
                   </compileSourceRoots>
-                  <compilerArgs>
-                    <arg>--patch-module</arg>
-                    <arg>org.jsoup=${project.build.outputDirectory}</arg>
-                  </compilerArgs>
                   <multiReleaseOutput>true</multiReleaseOutput>
                 </configuration>
               </execution>
