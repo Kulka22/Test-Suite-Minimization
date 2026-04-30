@@ -55,7 +55,7 @@ $includeClassRegex = '^(' + (($beforeTests -split ',' | ForEach-Object {
 mvn org.pitest:pitest-maven:mutationCoverage `
   "-DtargetClasses=$targetClasses" `
   "-DtargetTests=$beforeTests" `
-  -DreportsDirectory=target/pit-reports/before`
+  -DreportsDirectory=target/pit-reports/before `
   -DtimestampedReports=false `
   "-Dthreads=$threads" `
   "-DtimeoutFactor=$timeoutFactor" `
@@ -105,7 +105,7 @@ mvn org.pitest:pitest-maven:mutationCoverage `
   "-Dminimizer.pit.selectedIdsFile=$selectedIdsFile" `
   "-Dminimizer.algorithm=$algorithm" `
   "-DjvmArgs=-Dminimizer.pit.selectedIdsFile=$selectedIdsFile,-Dminimizer.algorithm=$algorithm" `
-  -DreportsDirectory=target/pit-reports/after`
+  -DreportsDirectory=target/pit-reports/after `
   -DtimestampedReports=false `
   "-Dthreads=$threads" `
   "-DtimeoutFactor=$timeoutFactor" `
